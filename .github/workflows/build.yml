@@ -186,6 +186,7 @@ jobs:
           pkg-config
           nasm
           yasm
+          mingw-w64-x86_64-SDL2
     - name: Install dev packages
       shell: msys2 {0}
       run: |
@@ -262,6 +263,7 @@ jobs:
           pkg-config
           nasm
           yasm
+          mingw-w64-x86_64-SDL2
     - name: Install dev packages
       shell: msys2 {0}
       run: |
