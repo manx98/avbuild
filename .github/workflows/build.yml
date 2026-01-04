@@ -195,7 +195,7 @@ jobs:
     - name: Configure and Build
       shell: cmd
       env:
-        USER_OPT: --enable-libshaderc ${{ USER_OPT }}
+        USER_OPT: '--enable-libshaderc ${USER_OPT}'
         if: ${{ matrix.target != 'uwp' }}
       run: |
         7z x -y dep.7z -otools
