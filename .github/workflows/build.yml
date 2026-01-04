@@ -197,7 +197,7 @@ jobs:
       env:
         USER_OPT: --enable-libshaderc ${{ USER_OPT }}
         if: ${{ matrix.target != 'uwp' }}
-      run: |  
+      run: |
         7z x -y dep.7z -otools
         set PKG_CONFIG_PATH_MFX=%CD%\tools\dep\VS2022\lib\pkgconfig
         set MSYS2_DIR=C:\msys64
