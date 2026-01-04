@@ -16,6 +16,7 @@ env:
   SF_PW_MAPPED: ${{ secrets.SF_PW }}
   SF_USER_MAPPED: ${{ secrets.SF_USER }}
   VC_LTL_VER: ${{ vars.VC_LTL_VER }}
+  USER_OPT: ${{ vars.USER_OPT }}
 
 jobs:
   Apple:
