@@ -2,10 +2,6 @@ name: Build
 
 on:
   push:
-  schedule:
-    - cron: '0 0 * * 0'
-
-
 env:
 #  if: (github.event_name == 'schedule')
 #  GITHUB_ENV: https://docs.github.com/en/actions/learn-github-actions/environment-variables#about-environment-variables
@@ -13,8 +9,6 @@ env:
   LLVM_VER: ${{ vars.LLVM_VER }}
   LLVM_VER_DEFAULT: 20
   NINJA_STATUS: '[%f/%t %e %r]'
-  SF_PW_MAPPED: ${{ secrets.SF_PW }}
-  SF_USER_MAPPED: ${{ secrets.SF_USER }}
   VC_LTL_VER: ${{ vars.VC_LTL_VER }}
   
 jobs:
