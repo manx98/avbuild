@@ -19,7 +19,7 @@ fi
 # compressed dSYM files are small
 $TAR Jcfv ffmpeg-${SUFFIX}{.tar.xz,}
 ls -lh *.xz
-[ "$GITHUB_EVENT_NAME" == "pull_request" ] && exit 0
+exit 0
 
 # echo "SF_USER_MAPPED: $SF_USER_MAPPED"
 # TARGET_OS=${TARGET_OS/rockchip/linux}
