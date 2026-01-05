@@ -26,7 +26,7 @@ if [ `which dpkg` ]; then
         fi
     elif [ "$TARGET_OS" == "windows-desktop" -o "$TARGET_OS" == "mingw" ]; then
         if [ "$COMPILER" == "gcc" ]; then
-            pkgs+=" g++-mingw-w64 mingw-w64-x86_64-SDL2"
+            pkgs+=" g++-mingw-w64"
         fi
     elif [ "$TARGET_OS" == "sunxi" -o "$TARGET_OS" == "raspberry-pi" ]; then
         pkgs+=" binutils-arm-linux-gnueabihf"
