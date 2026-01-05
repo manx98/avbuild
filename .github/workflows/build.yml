@@ -224,6 +224,7 @@ jobs:
     env:
       TARGET_OS: ${{ matrix.target }}
       CONFIG_SUFFIX: -${{ matrix.config }}
+      USER_OPT: ${{ vars.USER_OPT }}
     strategy:
       fail-fast: false
       matrix:
@@ -279,7 +280,7 @@ jobs:
         set HOME=%CD%
         set FFSRC=%CD%\ffmpeg-%FF_VERSION%
         set BUILD_NOW=true
-        set USER_OPT="--enable-libshaderc ${{USER_OPT}}"
+        set USER_OPT="--enable-libshaderc ${USER_OPT}"
         tools\vcbuild.bat VS2022 %TARGET_OS%10 all
     - name: Make SDK
       shell: cmd
