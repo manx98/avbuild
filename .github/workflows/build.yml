@@ -20,11 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [default,lite]
-        target: [windows-desktop,uwp]
-        exclude:
-          - config: default
-            target: uwp
+        config: [default]
+        target: [windows-desktop]
     steps:
     - uses: actions/checkout@v5
       with:
@@ -48,6 +45,7 @@ jobs:
           pkg-config
           nasm
           yasm
+          mingw-w64-x86_64-SDL2
     - name: Install dev packages
       shell: msys2 {0}
       run: |
