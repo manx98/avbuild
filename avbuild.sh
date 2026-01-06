@@ -1860,6 +1860,7 @@ build_all(){
       [[ "$os" == "sunxi" ]] && archs=(armv7)
       [ "${os:0:5}" == "mingw" ] && archs=(x86 x86_64)
       [ "${os:0:2}" == "vc" -o "${os:0:3}" == "win" ] && {
+	  	export USER_OPT="--enable-libshaderc --enable-ffplay --enable-avcodec --enable-avformat --enable-avutil --enable-swresample --enable-swscale --enable-demuxer=mov,matroska,hls --enable-decoder=h264,aac ${USER_OPT}"
         archs=(x86 x64 arm64)
         [ -d "$VC_LTL_DIR" ] && archs=(x86 x64)
       }
