@@ -12,38 +12,68 @@ env:
   VC_LTL_VER: ${{ vars.VC_LTL_VER }}
   
 jobs:
-  MinGW_GCC:
-    runs-on: ubuntu-latest
+  VS2022:
+    runs-on: windows-2022
     env:
-      TARGET_OS: mingw
-      COMPILER: gcc
-      PKG_CONFIG_PATH_MFX: "/tmp/dep/MinGW/lib/pkgconfig"
-      AMF_DIR: "/tmp/dep/include"
+      TARGET_OS: ${{ matrix.target }}
       CONFIG_SUFFIX: -${{ matrix.config }}
-      USER_OPT: ${{ vars.USER_OPT }}
     strategy:
       fail-fast: false
       matrix:
-        config: [lite]
+        config: [default,lite]
+        target: [windows-desktop,uwp]
+        exclude:
+          - config: default
+            target: uwp
     steps:
     - uses: actions/checkout@v5
       with:
         submodules: 'recursive'
     - name: Create Build Environment
-      shell: bash
+      shell: cmd
       run: |
-        sudo apt remove -y libc++1-14 libc++abi1-14 libunwind-14 python3-lldb-14 # conflict with latest llvm
-        ./tools/ci-before-build.sh
+        set FF_BRANCH=%FF_VERSION%
+        if not [%FF_BRANCH%]==[master] set FF_BRANCH=release/%FF_VERSION%
+        git clone -b %FF_BRANCH% --depth 1 --no-tags https://git.ffmpeg.org/ffmpeg.git ffmpeg-%FF_VERSION%
+        if not [%CONFIG_SUFFIX%]==[-default] copy /y config%CONFIG_SUFFIX%.sh config.sh
+    - uses: msys2/setup-msys2@v2
+      with:
+        release: false # disable installation cache, so exe path in avbuild.sh is correct
+        msystem: MSYS
+        update: true
+        install: >-
+          make
+          diffutils
+          patch
+          pkg-config
+          nasm
+          yasm
+    - name: Install dev packages
+      shell: msys2 {0}
+      run: |
+        wget https://sourceforge.net/projects/avbuild/files/dep/dep.7z/download -O dep.7z
     - name: Configure and Build
-      shell: bash
+      shell: cmd
+      env:
+        USER_OPT: --enable-libshaderc ${{ vars.USER_OPT }}
+        if: ${{ matrix.target != 'uwp' }}
       run: |
-        export FFSRC=$PWD/ffmpeg-${FF_VERSION}
-        ./avbuild.sh $TARGET_OS
+        7z x -y dep.7z -otools
+        set PKG_CONFIG_PATH_MFX=%CD%\tools\dep\VS2022\lib\pkgconfig
+        set MSYS2_DIR=C:\msys64
+        set HOME=%CD%
+        set FFSRC=%CD%\ffmpeg-%FF_VERSION%
+        set BUILD_NOW=true
+        tools\vcbuild.bat VS2022 %TARGET_OS%10 all
     - name: Make SDK
-      shell: bash
-      run: ./tools/ci-after-build.sh
+      shell: cmd
+      run: |
+        set SDK_NAME=ffmpeg-%FF_VERSION%-%TARGET_OS%-vs2022%CONFIG_SUFFIX%
+        move sdk* %SDK_NAME%
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off -xr!*.pdb %SDK_NAME%.7z %SDK_NAME%
+        7z a -ssc -m0=lzma2 -mx=9 -ms=on -mf=off %SDK_NAME%-pdb.7z -ir!%SDK_NAME%\*.pdb
     - name: Archieve SDK
       uses: actions/upload-artifact@v4
       with:
-        name: ffmpeg-${{ env.FF_VERSION }}-${{ env.TARGET_OS }}-${{ matrix.config }}
-        path: ffmpeg-*.tar.xz
+        name: ffmpeg-${{ env.FF_VERSION }}-${{ env.TARGET_OS }}-VS2022${{ matrix.config }}
+        path: ffmpeg-*.7z
